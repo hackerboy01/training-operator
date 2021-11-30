@@ -366,7 +366,8 @@ func (r *MPIJobReconciler) ReconcilePods(
 		}
 
 		if launcher == nil {
-			launcher, err = r.KubeClientSet.CoreV1().Pods(mpiJob.Namespace).Create(context.Background(), r.newLauncher(mpiJob, kubectlDeliveryImage, isGPULauncher), metav1.CreateOptions{})
+			deliveryImage := getKubectlDeliveryImage()
+			launcher, err = r.KubeClientSet.CoreV1().Pods(mpiJob.Namespace).Create(context.Background(), r.newLauncher(mpiJob, deliveryImage, isGPULauncher), metav1.CreateOptions{})
 			if err != nil {
 				r.Recorder.Eventf(mpiJob, corev1.EventTypeWarning, mpiJobFailedReason, "launcher pod created failed: %v", err)
 				return err

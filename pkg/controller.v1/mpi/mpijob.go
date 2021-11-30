@@ -15,6 +15,7 @@
 package mpi
 
 import (
+	"os"
 	"strings"
 
 	commonv1 "github.com/kubeflow/common/pkg/apis/common/v1"
@@ -76,6 +77,8 @@ const (
 	gangSchedulerName = "volcano"
 
 	kubectlDeliveryImage = "mpioperator/kubectl-delivery:latest"
+
+	envKubectlDeliveryImage = "KUBECTL_DELIVERY_IMAGE"
 
 	// podTemplateSchedulerNameReason is the warning reason when other scheduler name is set
 	// in pod templates with gang-scheduling enabled
@@ -259,4 +262,12 @@ func initializeReplicaStatuses(jobStatus *commonv1.JobStatus, rtype commonv1.Rep
 	}
 
 	jobStatus.ReplicaStatuses[rtype] = &commonv1.ReplicaStatus{}
+}
+
+func getKubectlDeliveryImage() string {
+	deliveryImage := os.Getenv(envKubectlDeliveryImage)
+	if len(deliveryImage) > 0 {
+		return deliveryImage
+	}
+	return kubectlDeliveryImage
 }
